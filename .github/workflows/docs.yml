@@ -29,6 +29,11 @@ jobs:
 
       - name: Build
         run: |
+          sudo apt update
+          sudo apt install -y mscgen
+
+          cargo install svgbob_cli
+
           pnpm install --frozen-lockfile
           ./build.sh
 
