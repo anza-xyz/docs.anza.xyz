@@ -4,52 +4,8 @@ set -eo pipefail
 
 here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
-# shellcheck source=ci/env.sh
-source "$here/../ci/env.sh"
+PROJECT_NAMES=("docs-anza-xyz")
 
-if [[ -z $CI ]]; then
-  echo "Publishing docs from local"
-  if [[ -z $PROJECT_NAME ]]; then
-    echo "❌ PROJECT_NAME is undefined"
-    exit 1
-  fi
-  PROJECT_NAMES=("$PROJECT_NAME")
-else
-  echo "Publishing docs from CI"
-
-  # skip docs publish from pull requests
-  if [[ -n $CI_PULL_REQUEST ]]; then
-    echo "skipping docs publish from pull requests"
-    exit 0
-  fi
-
-  # get the channel info
-  eval "$("$here/../ci/channel-info.sh")"
-  if [[ -n $CI_TAG ]]; then
-    if [[ $CI_TAG != $BETA_CHANNEL* ]]; then
-      echo "skipping docs publish from non-beta tag"
-      exit 0
-    fi
-    PROJECT_NAMES=("docs-anza-xyz" "beta-docs-anza-xyz")
-  else
-    case $CHANNEL in
-    edge)
-      PROJECT_NAMES=("edge-docs-anza-xyz")
-      ;;
-    beta)
-      PROJECT_NAMES=("beta-docs-anza-xyz")
-      ;;
-    stable)
-      echo "skipping docs publish from stable channel"
-      exit 0
-      ;;
-    *)
-      echo "❌ unknown channel: '$CHANNEL'"
-      exit 1
-      ;;
-    esac
-  fi
-fi
 echo "PROJECT_NAMES: ${PROJECT_NAMES[*]}"
 
 if [[ -z $VERCEL_TOKEN ]]; then
