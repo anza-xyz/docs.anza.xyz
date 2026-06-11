@@ -31,5 +31,4 @@ yarn-error.log*
 # Documentation build artifacts
 /html/
 /src/tests.ok
-/src/cli/usage.md
 /src/.gitbook/assets/*.svg
