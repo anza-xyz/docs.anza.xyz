@@ -20,26 +20,26 @@ transaction.
 
 At present, the following commands support offline signing:
 
-- [`create-stake-account`](../usage.md#solana-create-stake-account)
-- [`create-stake-account-checked`](../usage.md#solana-create-stake-account-checked)
-- [`deactivate-stake`](../usage.md#solana-deactivate-stake)
-- [`delegate-stake`](../usage.md#solana-delegate-stake)
-- [`split-stake`](../usage.md#solana-split-stake)
-- [`stake-authorize`](../usage.md#solana-stake-authorize)
-- [`stake-authorize-checked`](../usage.md#solana-stake-authorize-checked)
-- [`stake-set-lockup`](../usage.md#solana-stake-set-lockup)
-- [`stake-set-lockup-checked`](../usage.md#solana-stake-set-lockup-checked)
-- [`transfer`](../usage.md#solana-transfer)
-- [`withdraw-stake`](../usage.md#solana-withdraw-stake)
+- `create-stake-account`
+- `create-stake-account-checked`
+- `deactivate-stake`
+- `delegate-stake`
+- `split-stake`
+- `stake-authorize`
+- `stake-authorize-checked`
+- `stake-set-lockup`
+- `stake-set-lockup-checked`
+- `transfer`
+- `withdraw-stake`
 
-- [`create-vote-account`](../usage.md#solana-create-vote-account)
-- [`vote-authorize-voter`](../usage.md#solana-vote-authorize-voter)
-- [`vote-authorize-voter-checked`](../usage.md#solana-vote-authorize-voter-checked)
-- [`vote-authorize-withdrawer`](../usage.md#solana-vote-authorize-withdrawer)
-- [`vote-authorize-withdrawer-checked`](../usage.md#solana-vote-authorize-withdrawer-checked)
-- [`vote-update-commission`](../usage.md#solana-vote-update-commission)
-- [`vote-update-validator`](../usage.md#solana-vote-update-validator)
-- [`withdraw-from-vote-account`](../usage.md#solana-withdraw-from-vote-account)
+- `create-vote-account`
+- `vote-authorize-voter`
+- `vote-authorize-voter-checked`
+- `vote-authorize-withdrawer`
+- `vote-authorize-withdrawer-checked`
+- `vote-update-commission`
+- `vote-update-validator`
+- `withdraw-from-vote-account`
 
 ## Signing Transactions Offline
 
