@@ -63,11 +63,8 @@ npm run start
 
 The docs are built and published in GitHub Actions with the `docs.yml` workflow. On each PR, the docs are built but not published.
 
-In each post-commit build, docs are built and published using `vercel` to their respective domain depending on the build branch.
-
-- Master branch docs are published to `edge.docs.anza.xyz`
-- Beta branch docs are published to `beta.docs.anza.xyz`
-- Latest release tag docs are published to `docs.anza.xyz`
+In each post-commit build, docs are built and published to `docs.anza.xyz` using
+`vercel`.
 
 ## Common Issues
 
