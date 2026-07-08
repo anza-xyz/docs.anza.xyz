@@ -34,13 +34,9 @@ of the account.
 
 ### Set the BLS Public Key
 
-Voting validators must set the BLS public key associated with their authorized voter
-after SIMD-0387, BLS pubkey management, is active on the target cluster. The
-Solana CLI will not set the BLS public key before the feature is active.
+Voting validators must set the BLS public key associated with their authorized voter.
 
-> **IMPORTANT** As of June 2026, SIMD-0387 is active only on testnet. Setting
-> the BLS public key is a prerequisite for SIMD-0357. If the BLS public key is
-> not set, the vote account will behave as unstaked once SIMD-0357 is active.
+You must use `solana` version 4.1.0 or higher.
 
 For almost all validators, the authorized voter is the validator identity. If
 you are unsure which keypair is the current authorized voter, run:
