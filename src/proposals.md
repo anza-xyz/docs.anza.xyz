@@ -3,6 +3,16 @@ title: System Design Proposals
 sidebar_label: Overview
 ---
 
+:::caution
+
+These are **legacy** design proposals that predate the current improvement process and are retained for historical reference only.
+
+**New proposals should be submitted as [Solana Improvement Documents (SIMDs)](https://github.com/solana-foundation/solana-improvement-documents).**
+
+:::
+
+
+
 Changes to the Solana architecture are performed through a public proposal process (via pull requests) on the [Solana GitHub repository](https://github.com/solana-labs/solana). New proposals should be submitted with the "[Submit a Design Proposal](#submit-a-design-proposal)" guide below.
 
 There are currently two different states of these design proposals:
