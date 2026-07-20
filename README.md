@@ -40,11 +40,6 @@ The build script generates static content into the `build` directory and can be 
 
 Running this build script requires **Docker**, and will auto fetch the [solanalabs/rust](https://hub.docker.com/r/solanalabs/rust) image from Docker hub to compile the desired version of the [Solana CLI](https://docs.anza.xyz/cli) from source.
 
-This build script will also:
-
-- generate the `cli/usage.md` document from the output of each of the Solana CLI commands and sub-commands
-- convert each of the `art/*.bob` files into SVG images used throughout the docs
-
 > Note: Running this build script is **required** before being able to run the site locally via the `npm run start` command since it will generate the `cli/usage.md` document.
 
 If you run into errors or issues with this step, see [Common Issues](#common-issues) below. See also [CI Build Flow](#ci-build-flow) for more details on production deployments of the docs.
@@ -107,15 +102,3 @@ sudo ./build.sh
 # or
 sudo ./build-cli-usage.sh
 ```
-
-### Multiple SVG images not found
-
-```bash
-Error: Image static/img/***.svg used in src/***.md not found.
-```
-
-During the build process of the docs (specifically within the `./convert-ascii-to-svg.sh` script run by `./build.sh`), each of the `art/*.bob` files are converted to SVG images and saved to the `static/img` directory.
-
-To correct this issue, use the steps above to [build the docs locally](#build-locally).
-
-> Note: While not generating and saving these SVG images within your local repo will **NOT** prevent you from running the local development server, it will result in numerous output errors in your terminal.
