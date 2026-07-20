@@ -1,0 +1,145 @@
+name: Check Latest Recommended Solana CLI Version
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *"
+
+permissions: {}
+
+concurrency:
+  group: update-agave-release
+  cancel-in-progress: false
+
+jobs:
+  update-release:
+    if: github.repository_owner == 'anza-xyz'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    environment: "CLI Version Check"
+    steps:
+      - name: Create github app token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.CLIENT_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Set git config
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf https://github.com/
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Checkout docs
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          path: docs
+          persist-credentials: false
+
+      - name: Checkout Agave
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: anza-xyz/agave
+          path: agave
+          persist-credentials: false
+
+      - name: Find latest beta release
+        id: release
+        working-directory: ${{ github.workspace }}/agave
+        shell: bash
+        run: |
+          set -euo pipefail
+          latest_tag="$(cargo xtask channel-info --json | jq -er '.BETA_CHANNEL_LATEST_TAG | select(type == "string" and length > 0)')"
+
+          if [[ ! "$latest_tag" =~ ^v[0-9A-Za-z._-]+$ ]]; then
+            echo "Unexpected Agave release tag: $latest_tag" >&2
+            exit 1
+          fi
+
+          echo "tag=$latest_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Check update branch
+        id: branch
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          LATEST_TAG: ${{ steps.release.outputs.tag }}
+        with:
+          script: |
+            const branch = `bump-recommended-solana-cli-version-to-${process.env.LATEST_TAG}`;
+            core.setOutput("name", branch);
+
+            try {
+              await github.rest.git.getRef({
+                ...context.repo,
+                ref: `heads/${branch}`,
+              });
+              core.info(`Branch ${branch} already exists; skipping this release.`);
+              core.setOutput("exists", "true");
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              core.setOutput("exists", "false");
+            }
+
+      - name: Update release version
+        if: steps.branch.outputs.exists == 'false'
+        working-directory: ${{ github.workspace }}/docs
+        env:
+          LATEST_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          grep -q '^LATEST_AGAVE_RELEASE_VERSION=' set-solana-release-tag.sh
+          sed -i -E "s/^LATEST_AGAVE_RELEASE_VERSION=.*/LATEST_AGAVE_RELEASE_VERSION=${LATEST_TAG}/" set-solana-release-tag.sh
+
+      - name: Commit and push changes
+        if: steps.branch.outputs.exists == 'false'
+        id: changes
+        working-directory: ${{ github.workspace }}/docs
+        env:
+          LATEST_TAG: ${{ steps.release.outputs.tag }}
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- set-solana-release-tag.sh; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git checkout -b "$UPDATE_BRANCH"
+          git add set-solana-release-tag.sh
+          git commit -m "chore: update Agave release to $LATEST_TAG"
+          git push origin "$UPDATE_BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          LATEST_TAG: ${{ steps.release.outputs.tag }}
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { data: pullRequest } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: process.env.UPDATE_BRANCH,
+              base: context.payload.repository.default_branch,
+              title: `chore: update recommended Solana CLI version to ${process.env.LATEST_TAG}`,
+            });
+
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pullRequest.number,
+              team_reviewers: ["devops"],
+            });
+
+            core.info(`Created pull request #${pullRequest.number}`);
