@@ -8,7 +8,6 @@
 .docusaurus
 .cache-loader
 .vercel
-vercel.json
 
 # use pnpm and pnpm-lock.yaml
 yarn.lock
