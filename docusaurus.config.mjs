@@ -1,6 +1,7 @@
-const math = require("remark-math");
-const katex = require("rehype-katex");
-module.exports = {
+import katex from "rehype-katex";
+import math from "remark-math";
+
+export default {
   title: "Agave",
   tagline:
     "Agave is an open source project implementing a new, high-performance, permissionless blockchain.",
