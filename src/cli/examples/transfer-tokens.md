@@ -91,7 +91,7 @@ wallet.
 Confirm the updated balances with `solana balance`:
 
 ```bash
-solana balance <ACCOUNT_ADDRESS> --url http://api.devnet.solana.com
+solana balance <ACCOUNT_ADDRESS> --url https://api.devnet.solana.com
 ```
 
 where `<ACCOUNT_ADDRESS>` is either the public key from your keypair or the

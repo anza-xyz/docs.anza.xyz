@@ -11,7 +11,7 @@ The solana cli includes `get` and `set` configuration commands to automatically
 set the `--url` argument for cli commands. For example:
 
 ```bash
-solana config set --url http://api.devnet.solana.com
+solana config set --url https://api.devnet.solana.com
 ```
 
 While this section demonstrates how to connect to the Devnet cluster, the steps
@@ -183,7 +183,7 @@ You should see the following output:
 
 ```text
 Config File: /home/solana/.config/solana/cli/config.yml
-RPC URL: http://api.devnet.solana.com
+RPC URL: https://api.devnet.solana.com
 WebSocket URL: ws://api.devnet.solana.com/ (computed)
 Keypair Path: /home/solana/validator-keypair.json
 Commitment: confirmed
