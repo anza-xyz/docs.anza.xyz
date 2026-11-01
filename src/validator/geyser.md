@@ -364,9 +364,9 @@ To select all vote transactions:
 
 #### Install PostgreSQL Server
 
-Please follow [PostgreSQL Ubuntu Installation](https://www.postgresql.org/download/linux/ubuntu/)
-on instructions to install the PostgreSQL database server. For example, to
-install postgresql-14,
+Select your distribution on the [PostgreSQL Linux downloads page](https://www.postgresql.org/download/linux/)
+to find its installation instructions. For example, to install PostgreSQL 14 on
+a Debian-based distribution:
 
 ```
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
@@ -374,6 +374,10 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt-get update
 sudo apt-get -y install postgresql-14
 ```
+
+The examples below use PostgreSQL 14 and Debian-style configuration paths;
+adjust the version and paths for your installation.
+
 #### Control the Database Access
 
 Modify the pg_hba.conf as necessary to grant the plugin to access the database.
