@@ -25,9 +25,7 @@ To start this guide, you will be running commands on your trusted computer, not
 on the remote machine that you plan to use for validator operations. First,
 locate the terminal program on your _trusted computer_.
 
-- on Mac, you can search for the word _terminal_ in spotlight.
-- on Ubuntu, you can type `CTRL + Alt + T`.
-- on Windows, you will have to open the command prompt as an Administrator.
+On Linux, open your desktop's terminal application.
 
 ## Install The Solana CLI Locally
 
@@ -185,9 +183,10 @@ ssh user@<server.hostname>
 You will have to check with your server provider to get the correct user account
 and hostname that you will ssh into.
 
-## Update Your Ubuntu Packages
+## Update Your Linux Packages
 
-Make sure you have the latest and greatest package versions on your server
+Make sure you have the latest package versions on your server using your
+distribution's package manager. On Debian-based distributions, use:
 
 ```
 sudo apt update
@@ -196,7 +195,8 @@ sudo apt upgrade
 
 ## Sol User
 
-Create a new Ubuntu user, named `sol`, for running the validator:
+Create a new Linux user, named `sol`, for running the validator. On Debian-based
+distributions, use:
 
 ```
 sudo adduser sol
@@ -207,7 +207,7 @@ It is a best practice to always run your validator as a non-root user, like the
 
 ## Hard Drive Setup
 
-On your Ubuntu computer make sure that you have at least `2TB` of disk space
+On your Linux computer make sure that you have at least `2TB` of disk space
 mounted. You can check disk space using the `df` command:
 
 ```

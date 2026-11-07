@@ -4,11 +4,11 @@ sidebar_label: Security
 pagination_label: "Best Practices: Validator Security"
 ---
 
-Being a system administrator for an Ubuntu computer requires technical knowledge of the system and best security practices. The following list should help you get started and is considered the bare minimum for keeping your system safe.
+Being a system administrator for a Linux computer requires technical knowledge of the system and best security practices. The following list should help you get started and is considered the bare minimum for keeping your system safe.
 
 ## Keep Your System Up To Date
 
-Make sure to regularly update packages in your Ubuntu system. Out of date packages may contain known security vulnerabilities that a hacker could exploit. A good practice would be to update weekly at least. To update your system, do the following:
+Make sure to regularly update packages in your Linux system. Out of date packages may contain known security vulnerabilities that a hacker could exploit. A good practice would be to update weekly at least. Use your distribution's package manager to update your system. On Debian-based distributions, use:
 
 ```
 sudo apt update
@@ -37,7 +37,7 @@ Your system should close all ports that do not need to be open to the outside wo
 
 [fail2ban](https://github.com/fail2ban/fail2ban) is a network security tool that checks your logs for suspicious login attempts and bans those IP addresses after repeated attempts. This will help mitigate brute force attacks on your server.
 
-The default setup should work out-of-the-box by simply installing `fail2ban`:
+Install `fail2ban` using your distribution's package manager. On Debian-based distributions, use:
 
 ```
 sudo apt install fail2ban
