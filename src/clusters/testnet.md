@@ -144,7 +144,7 @@ RUST_LOG=info ./net.sh start
   * `./gce.sh info ` to get the public IPs
   * `./ssh.sh <IP> ` to get a shell on the node
   * `sudo su` will give you root access on the nodes
-  * Nodes run latest ubuntu LTS image
+  * Nodes run Linux using the latest Ubuntu LTS image
 * You can also interact with the nodes using solana cli:
 ```bash
 # source ip list  use as ${validatorIpList[4]}
