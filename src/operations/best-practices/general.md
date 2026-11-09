@@ -81,6 +81,11 @@ below help command for details:
 agave-validator exit --help
 ```
 
+For nodes serving transaction history, allow shutdown to finish before stopping
+the process or rebooting. An interrupted shutdown can leave incorrect history
+even after restart. See
+[RPC shutdown and restart guidance](../setup-an-rpc-node.md#shutdown-and-restart).
+
 ## Upgrading
 
 There are many ways to upgrade the

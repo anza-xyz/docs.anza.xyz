@@ -21,7 +21,9 @@ Below is an example `validator.sh` file for a `testnet` RPC server.
 
 You will want to be aware of the following flags:
 
-- `--full-rpc-api`: enables all RPC operations on this validator.
+- `--full-rpc-api`: exposes the full set of RPC methods.
+- `--enable-rpc-transaction-history`: stores and serves block and transaction
+  history, including block times. This is separate from `--full-rpc-api`.
 - `--no-voting`: runs the validator without participating in consensus. Typically, you do not want to run a validator as _both_ a consensus node and a full RPC node due to resource constraints.
 - `--private-rpc`: does not publish the validator's open RPC port in the `solana gossip` command
 
@@ -39,6 +41,7 @@ exec agave-validator \
     --known-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv \
     --only-known-rpc \
     --full-rpc-api \
+    --enable-rpc-transaction-history \
     --no-voting \
     --ledger /mnt/ledger \
     --accounts /mnt/accounts \
@@ -76,6 +79,40 @@ Additional examples of other Solana cluster-specific validator commands can be f
 
 Keep in mind, you will still need to customize these commands to operate as an RPC node, as well as other
 operator-specific configuration settings.
+
+## Transaction history
+
+Without `--enable-rpc-transaction-history`, the following calls return an error
+even when `--full-rpc-api` is enabled:
+
+- `getBlock`, `getBlockTime`, `getTransaction`, `getSignaturesForAddress`, and
+  `getInflationReward`.
+- `getSignatureStatuses` when the request includes
+  `searchTransactionHistory: true`.
+
+`getSignatureStatuses` still checks recent transaction statuses when
+`searchTransactionHistory` is omitted or `false`.
+
+Finalization can happen before the node finishes writing transaction history.
+RPC results and block notifications may therefore lag behind finalization.
+Clients should retry requests when history is temporarily unavailable.
+
+### Shutdown and restart
+
+Use `agave-validator exit` for
+[planned restarts](./best-practices/general.md#restarting-your-validator) and
+allow shutdown to finish. The Transaction Status Service (TSS) must finish its
+queued writes and purges before exit. A backlog can extend shutdown time, so
+allow for this in service manager or container shutdown deadlines.
+
+If the process crashes, is forcibly terminated, or TSS fails to drain, retained
+history may be incomplete or contain transactions discarded during fast leader
+handover. Restarting or loading a snapshot does not guarantee a repair. Do not
+rely on affected history until it has been verified or rebuilt.
+
+Check for TSS errors in the shutdown logs. The message
+`TransactionStatusService has stopped` also appears after errors and does not,
+by itself, confirm a successful drain.
 
 ## Account indexing
 
