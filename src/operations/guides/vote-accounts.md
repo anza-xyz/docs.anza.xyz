@@ -209,7 +209,7 @@ command.
 The vote authority can be changed at most once per epoch. If the authority is
 changed with
 `vote-authorize-voter-checked`,
-this will not take effect until the beginning of the next epoch. To support a
+this takes effect two epochs after the current one. To support a
 smooth transition of the vote signing, `agave-validator` allows the
 `--authorized-voter` argument to be specified multiple times. This allows the
 validator process to keep voting successfully when the network reaches an epoch
@@ -294,37 +294,33 @@ You will need access to the _authorized withdrawer_ keypair for the vote account
 to change the validator identity. The following steps assume that
 `~/authorized_withdrawer.json` is that keypair.
 
+An identity change made in epoch E takes effect at the first slot of E + 2.
+Voting and the leader schedule both use the epoch stakes, which are computed two
+epochs in advance. Until E + 2 the old identity keeps voting and producing
+blocks, and a validator with the new identity does not vote.
+
 1. Create the new validator identity keypair,
    `solana-keygen new -o ~/new-validator-keypair.json`.
 2. Ensure that the new identity account has been funded,
    `solana transfer ~/new-validator-keypair.json 500`.
-3. Run
+3. In epoch E, run
    `solana vote-update-validator ~/vote-account-keypair.json ~/new-validator-keypair.json ~/authorized_withdrawer.json`
-   to modify the validator identity in your vote account
-4. Restart your validator with the new identity keypair for the `--identity`
-   argument
+   to modify the validator identity in your vote account.
+4. Keep the validator with the old identity running.
+5. Start a second validator on a different machine with the new identity keypair
+   for the `--identity` argument and the same `--vote-account` and
+   `--authorized-voter` arguments. It runs as a hot spare until E + 2 and then
+   starts voting and producing blocks.
+6. After the cluster reaches E + 2, stop the validator with the old identity.
 
-**Additional steps are required if your validator has stake.** The leader
-schedule is computed two epochs in advance. Therefore if your old validator
-identity was in the leader schedule, it will remain in the leader schedule for
-up to two epochs after the validator identity change. If extra steps are not
-taken your validator will produce no blocks until your new validator identity is
-added to the leader schedule.
+To change the vote authority as well, follow
+[Vote Account Authorized Voter](#vote-account-authorized-voter) in the same
+epoch E and start the second validator with the new vote authority keypair.
 
-After your validator is restarted with the new identity keypair, per step 4,
-start a second non-voting validator on a different machine with the old identity
-keypair without providing the `--vote-account` argument, as well as with the
-`--no-wait-for-vote-to-start-leader` argument.
-
-This temporary validator should be run for two full epochs. During this time it
-will:
-
-- Produce blocks for the remaining slots that are assigned to your old validator
-  identity
-- Receive the transaction fees and rent rewards for your old validator identity
-
-It is safe to stop this temporary validator when your old validator identity is
-no longer listed in the `solana leader-schedule` output.
+If the validator runs the Jito client, the old identity can no longer create the
+Jito tip distribution account once step 3 has landed. Create it with the new
+identity for E + 1, and also for E if step 3 lands before the validator's first
+leader slot in E.
 
 ### Vote Account Authorized Voter
 
@@ -343,13 +339,14 @@ migration.
    assume that `~/validator-keypair.json` is that keypair.
 4. Run
    `solana vote-authorize-voter-checked ~/vote-account-keypair.json ~/validator-keypair.json ~/new-vote-authority.json`.
-   The new vote authority is scheduled to become active starting at the next
-   epoch.
+   The new vote authority is scheduled to become active two epochs after the
+   current one. Under Alpenglow the CLI sets the BLS public key derived from the
+   new vote authority keypair in the same instruction.
 5. `agave-validator` now needs to be restarted with the old and new vote
-   authority keypairs, so that it can smoothly transition at the next epoch. Add
-   the two arguments on restart:
+   authority keypairs, so that it can smoothly transition when the new vote
+   authority becomes active. Add the two arguments on restart:
    `--authorized-voter ~/validator-keypair.json --authorized-voter ~/new-vote-authority.json`
-6. After the cluster reaches the next epoch, remove the
+6. After the new vote authority has become active, remove the
    `--authorized-voter ~/validator-keypair.json` argument and restart
    `agave-validator`, as the old vote authority keypair is no longer required.
 
