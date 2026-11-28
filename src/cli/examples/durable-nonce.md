@@ -50,7 +50,7 @@ solana create-nonce-account nonce-keypair.json 1
 - Output
 
 ```text
-2SymGjGV4ksPdpbaqWFiDoBz8okvtiik4KE9cnMQgRHrRLySSdZ6jrEcpPifW4xUpp4z66XM9d9wM48sA7peG2XL
+Signature: 2j3hbhH1HjWkEZi1YKz2kKjHyWjUXHsy4Vxz1jd1ugf2z9ANNe2mz2PVWWprouUBddqnugmrQccBVpe2vFmAyEZj
 ```
 
 > To keep the keypair entirely offline, use the
@@ -74,10 +74,10 @@ solana nonce nonce-keypair.json
 - Output
 
 ```text
-8GRipryfxcsxN8mAGjy8zbFo9ezaUsh47TsPzmZbuytU
+HB9mj7UwBn1TVtiENKe8kBJD7FGQcgTeEVc3P2jZ2CHX
 ```
 
-> For full usage documentation, run `solana get-nonce --help`
+> For full usage documentation, run `solana nonce --help`
 
 ### Advancing the Stored Nonce Value
 
@@ -93,7 +93,7 @@ solana new-nonce nonce-keypair.json
 - Output
 
 ```text
-44jYe1yPKrjuYDmoFTdgPjg8LFpYyh1PFKJqm5SC1PiSyAL8iw1bhadcAX1SL7KDmREEkmHpYvreKoNv6fZgfvUK
+Signature: 5fbsxpCSN8rieby2BZ9zQL9j8wXBb2Qm5m77Dfv4si7hxRXXoqhrPpvXW7qk9ivtxEzAPgJhHTGcNBGWhCxgwRau
 ```
 
 > For full usage documentation, run `solana new-nonce --help`
@@ -111,9 +111,11 @@ solana nonce-account nonce-keypair.json
 - Output
 
 ```text
-balance: 0.5 SOL
-minimum balance required: 0.00136416 SOL
-nonce: DZar6t2EaCFQTbUP4DHKwZ1wT8gCPW2aRfkVWhydkBvS
+Balance: 1 SOL
+Minimum Balance Required: 0.00144768 SOL
+Nonce blockhash: 6qAx6MPdfef4Ad4KQiZMb6HdhCSHGuW9kadkdpu9aMQH
+Fee: 5000 lamports per signature
+Authority: 5oDEeishqikhzF9r4uRQaWwjEgsSXi3NVMRpjQKSeoaU
 ```
 
 > For full usage documentation, run `solana nonce-account --help`
@@ -131,7 +133,7 @@ solana withdraw-from-nonce-account nonce-keypair.json ~/.config/solana/id.json 0
 - Output
 
 ```text
-3foNy1SBqwXSsfSfTdmYKDuhnVheRnKXpoPySiUDBVeDEs6iMVokgqm7AqfTjbk7QBE8mqomvMUMNQhtdMvFLide
+Signature: 2gDwFsFs8wZTkRazTtJm8KhLTHeAkvRLwTp1aYgvsPgUFbPbwjPiVbowvKuQ1v2hidbZSa1nkDtdmiyMPH6HT33c
 ```
 
 > Close a nonce account by withdrawing the full balance
@@ -151,7 +153,7 @@ solana authorize-nonce-account nonce-keypair.json nonce-authority.json
 - Output
 
 ```text
-3F9cg4zN9wHxLGx4c3cUKmqpej4oa67QbALmChsJbfxTgTffRiL3iUehVhR9wQmWgPua66jPuAYeL1K2pYYjbNoT
+Signature: 54awfuXfYxgTyohXqc5CseNsidJ8LbSEHNT2QotjuMx7nTVBqtBm2coEKR1xr7o1rHedTCmeqWyCcV45Jy6dLGcc
 ```
 
 > For full usage documentation, run `solana authorize-nonce-account --help`
@@ -164,16 +166,20 @@ supported.
 - `--nonce`, specifies the account storing the nonce value
 - `--nonce-authority`, specifies an optional [nonce authority](#nonce-authority)
 
-The following subcommands have received this treatment so far
+They are supported by `transfer` and by the stake and vote subcommands that send
+a transaction, for example
 
-- `pay`
+- `transfer`
 - `delegate-stake`
 - `deactivate-stake`
 
+A subcommand supports durable nonces if `solana <command> --help` lists
+`--nonce`.
+
 ### Example Pay Using Durable Nonce
 
-Here we demonstrate Alice paying Bob 1 SOL using a durable nonce. The procedure
-is the same for all subcommands supporting durable nonces
+Here we demonstrate Alice paying Bob 0.01 SOL using a durable nonce. The
+procedure is the same for all subcommands supporting durable nonces
 
 #### - Create accounts
 
@@ -192,6 +198,10 @@ her some SOL
 
 ```bash
 $ solana airdrop -k alice.json 1
+Requesting airdrop of 1 SOL
+
+Signature: 41m8tVkDcjH3WYRtTMqjddUSG9sm3u7vjDvgnuYgG3sDfbiFBHGE6QtGqu7Ewm82EvAGWwhXr5CrAeAifENEyPEB
+
 1 SOL
 ```
 
@@ -204,7 +214,7 @@ Now Alice needs a nonce account. Create one
 
 ```bash
 $ solana create-nonce-account -k alice.json nonce.json 0.1
-3KPZr96BTsL3hqera9up82KAU462Gz31xjqJ6eHUAjF935Yf8i1kmfEbo6SVbNaACKE5z6gySrNjVRvmS8DcPuwV
+Signature: jTkr44TVDc4EugjEKFtjv9LaKuZZ4D2xop7g3MVjgwjg3jgAXw7X6Bex32wqM7qoNFsKTo5j5yAV33secqiUoRX
 ```
 
 #### - A failed first attempt to pay Bob
@@ -214,8 +224,7 @@ expires and the transaction fails
 
 ```bash
 $ solana transfer -k alice.json --blockhash expiredDTaxfagttWjQweib42b6ZHADSx94Tw8gHx11 bob.json 0.01
-[2020-01-02T18:48:28.462911000Z ERROR solana_cli::cli] Io(Custom { kind: Other, error: "Transaction \"33gQQaoPc9jWePMvDAeyJpcnSPiGUAdtVg8zREWv4GiKjkcGNufgpcbFyRKRrA25NkgjZySEeKue5rawyeH5TzsV\" failed: None" })
-Error: Io(Custom { kind: Other, error: "Transaction \"33gQQaoPc9jWePMvDAeyJpcnSPiGUAdtVg8zREWv4GiKjkcGNufgpcbFyRKRrA25NkgjZySEeKue5rawyeH5TzsV\" failed: None" })
+Error: Hash has expired expiredDTaxfagttWjQweib42b6ZHADSx94Tw8gHx11
 ```
 
 #### - Nonce to the rescue!
@@ -226,16 +235,21 @@ blockhash stored there
 > Remember, `alice.json` is the [nonce authority](#nonce-authority) in this
 > example
 
+> Bob's account holds no SOL yet, so `transfer` needs
+> `--allow-unfunded-recipient`
+
 ```bash
 $ solana nonce-account nonce.json
-balance: 0.1 SOL
-minimum balance required: 0.00136416 SOL
-nonce: F7vmkY3DTaxfagttWjQweib42b6ZHADSx94Tw8gHx3W7
+Balance: 0.1 SOL
+Minimum Balance Required: 0.00144768 SOL
+Nonce blockhash: 9L6KXcPs97j6TJfvZ75HMcLA56582HJqon4iQozP2RuR
+Fee: 5000 lamports per signature
+Authority: 3kJ1NScgqfhHamGsHfa4HfVv7VDVvXRUwi7WFVEttpsj
 ```
 
 ```bash
-$ solana transfer -k alice.json --blockhash F7vmkY3DTaxfagttWjQweib42b6ZHADSx94Tw8gHx3W7 --nonce nonce.json bob.json 0.01
-HR1368UKHVZyenmH7yVz5sBAijV6XAPeWbEiXEGVYQorRMcoijeNAbzZqEZiH8cDB8tk65ckqeegFjK8dHwNFgQ
+$ solana transfer -k alice.json --blockhash 9L6KXcPs97j6TJfvZ75HMcLA56582HJqon4iQozP2RuR --nonce nonce.json --allow-unfunded-recipient bob.json 0.01
+Signature: 3huKk6Y5BEKPPp1wsPVS9awYZiT6k4SqLdnUm1D4YAYj9zjouzSSBNAfEJ3ZkNRDuwwPMMdehXedqSs2HGWpjAFy
 ```
 
 #### - Success!
@@ -250,7 +264,9 @@ $ solana balance -k bob.json
 
 ```bash
 $ solana nonce-account nonce.json
-balance: 0.1 SOL
-minimum balance required: 0.00136416 SOL
-nonce: 6bjroqDcZgTv6Vavhqf81oBHTv3aMnX19UTB51YhAZnN
+Balance: 0.1 SOL
+Minimum Balance Required: 0.00144768 SOL
+Nonce blockhash: CsDxqUmMopLxHQJuqHv4zfV1VB9zDNve2oJ77VvW4969
+Fee: 5000 lamports per signature
+Authority: 3kJ1NScgqfhHamGsHfa4HfVv7VDVvXRUwi7WFVEttpsj
 ```
